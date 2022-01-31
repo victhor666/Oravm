@@ -7,7 +7,7 @@ variable "prefix" {
 variable "az_location" {
     default = "eastus"
 }
-# VPC INFO
+# INFO VPC
     variable "vnet_name" {
       default = "OracleVnet"
     }
@@ -16,7 +16,7 @@ variable "az_location" {
       default = "192.168.0.0/16"
     }
 
-# SUBNET INFO
+# INFO SUBNET
     variable "subnet_name"{
       default = "OracleSubet1" 
       }

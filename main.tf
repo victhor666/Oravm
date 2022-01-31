@@ -6,11 +6,11 @@ provider "azurerm" {
           }
     }
 #################
-# RESOURCE GROUP
+# GRUPO DE RECURSOS
 #################
 
 resource "azurerm_resource_group" "rg" {
-  name     = "${var.prefix}-resources"
+  name     = "${var.prefix}-Recursos"
   location = "${var.az_location}"
 }
 
@@ -24,7 +24,7 @@ resource "azurerm_virtual_network" "oracle_vnet" {
   address_space       = [var.vnet_cidr]
 }
 #################
-# SUBNET
+# SUBREDES
 #################
 # aws_subnet.terra_sub:
 resource "azurerm_subnet" "oracle_subnet" {
@@ -35,9 +35,9 @@ resource "azurerm_subnet" "oracle_subnet" {
 }
 
 ######################
-# Network Security Group
+# Network security groups
 ######################    
-# aws_security_group.terra_sg:
+
 resource "azurerm_network_security_group" "oracle_nsg" {
   name                = "${var.prefix}-nsg"
   location            = azurerm_resource_group.rg.location
@@ -53,6 +53,7 @@ resource "azurerm_network_security_group" "oracle_nsg" {
     destination_port_range     = "*"
     source_address_prefix      = "*"
     destination_address_prefix = "*"
+    description                = "Salida a internet sin restricciones. Debe ser modificado mas adelante"
   }
 security_rule {
     name                       = "Inbound HTTP access"
@@ -60,11 +61,11 @@ security_rule {
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
-    source_port_ranges          = ["22","80","443","3389"]
-    destination_port_ranges     = ["22","80","443","3389"]
+    source_port_ranges          = ["22","80","443"]
+    destination_port_ranges     = ["22","80","443"]
     source_address_prefix      = "*"
     destination_address_prefix = "*"
-    description                = "RDP-HTTP-HTTPS ingress trafic" 
+    description                = "RDP-HTTP-HTTPS entradas estandar de gestion" 
   }
 
   
