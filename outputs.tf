@@ -1,27 +1,27 @@
 output "vnet_name" {
   description = "Nombre de la Vnet creada para el Oracle"
-  value       = azurerm_virtual_network.OracelVnet.name
+  value       = azurerm_virtual_network.oracle_vnet.name
 }
 output "vnet_id" {
       description = "ID de la Vnet. "
-      value       = azurerm_virtual_network.OracelVnet.id
+      value       = azurerm_virtual_network.oracle_vnet.id
     }
 output "vnet_CIDR" {
       description = "CIDR de la vnet "
-      value       = azurerm_virtual_network.OracelVnet.address_space
+      value       = azurerm_virtual_network.oracle_vnet.address_space
     }    
     
 output "Subnet_Name" {
       description = "Nombre de la subred creada "
-      value       =  azurerm_subnet.OracelSubnet1.name
+      value       =  azurerm_subnet.oracle_subnet.name
     }
 output "Subnet_id" {
       description = "ID de la subred. "
-      value       = azurerm_subnet.OracelSubnet1.id
+      value       = azurerm_subnet.oracle_subnet.id
     }
 output "Subnet_CIDR" {
       description = "CIDR de la subnet "
-      value       = azurerm_subnet.OracelSubnet1.address_prefixes
+      value       = azurerm_subnet.oracle_subnet.address_prefixes
     }
 
 

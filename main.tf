@@ -29,7 +29,7 @@ resource "azurerm_virtual_network" "oracle_vnet" {
 # aws_subnet.terra_sub:
 resource "azurerm_subnet" "oracle_subnet" {
   name                 = "internal"
-  virtual_network_name = "${azurerm_virtual_network.OracleVnet.name}"
+  virtual_network_name = "${azurerm_virtual_network.oracle_vnet.name}"
   resource_group_name  = "${azurerm_resource_group.rg.name}"
   address_prefixes     = [var.subnet_cidr]
 }
@@ -75,6 +75,6 @@ tags = {
 }
 
 resource "azurerm_subnet_network_security_group_association" "nsg_sub" {
-  subnet_id                 = azurerm_subnet.OracleSubnet1.id
+  subnet_id                 = azurerm_subnet.oracle_subnet.id
   network_security_group_id = azurerm_network_security_group.oracle_nsg.id
 }
