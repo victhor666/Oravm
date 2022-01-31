@@ -1,7 +1,7 @@
 # Azure account region and authentication 
 variable "prefix" {
   default="ora"
-  description = "The prefix used for all resources in this example"
+  description = "Prefijo para todo"
 }
 
 variable "az_location" {
