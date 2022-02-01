@@ -34,5 +34,4 @@ sudo systemctl status nginx
 sudo firewall-cmd --zone=public --permanent --add-service=http
 sudo firewall-cmd --zone=public --permanent --add-service=https
 sudo firewall-cmd --reload
-sudo cp /usr/share/nginx/html/index.html /usr/share/nginx/html/index.original.html  
-sudo cp $FILE  /usr/share/nginx/html/index.html
+sudo cp /usr/share/nginx/html/index.html /usr/share/nginx/html/index.original.html
