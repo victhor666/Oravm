@@ -32,14 +32,14 @@ resource "azurerm_linux_virtual_machine" "OraVm" {
   network_interface_ids           = [azurerm_network_interface.OraNic.id]
   size                            = var.vm_size
   computer_name                   = "OracleVM"
-  admin_username                  = "admin"
+  admin_username                  = "azureuser"
   disable_password_authentication = true
   provision_vm_agent              = true
   custom_data                     = base64encode("${file(var.user_data)}")
   #custom_data    = "${path.root}/scripts/middleware_disk.sh"
 
   admin_ssh_key {
-    username   = "admin"
+    username   = "azureuser"
     public_key = file("~/orauser.pub")
   }
   ######################
@@ -51,9 +51,6 @@ resource "azurerm_linux_virtual_machine" "OraVm" {
     sku       = var.os_publisher[var.OS].sku
     version   = "latest"
   }
-
-
-
 
   # Si comentamos esta línea la máquina se apagara pero no se borrará automaticamente
   # delete_os_disk_on_termination = true

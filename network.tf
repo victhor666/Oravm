@@ -53,11 +53,11 @@ resource "azurerm_network_security_group" "Oracle_Nsg" {
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
-    source_port_ranges         = ["22", "80", "443"]
+    source_port_ranges         = "*"
     destination_port_ranges    = ["22", "80", "443"]
     source_address_prefix      = "*"
     destination_address_prefix = "*"
-    description                = "RDP-HTTP-HTTPS entradas estandar de gestion"
+    description                = "SSH-HTTP-HTTPS entradas estandar de gestion"
   }
 
 
