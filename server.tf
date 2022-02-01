@@ -1,7 +1,7 @@
 resource "azurerm_network_interface" "OraNic" {
   name                = "${var.prefix}-nic"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.Rg.location
+  resource_group_name = azurerm_resource_group.Rg.name
 
   ip_configuration {
     name                          = "Configuracion_ip"
@@ -12,8 +12,8 @@ resource "azurerm_network_interface" "OraNic" {
 }
 resource "azurerm_public_ip" "IpPublica" {
   name                = "TerraPublicIp"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.Rg.name
+  location            = azurerm_resource_group.Rg.location
   allocation_method   = "Dynamic"
 
   tags = {
@@ -27,8 +27,8 @@ resource "azurerm_network_interface_security_group_association" "AsocSG" {
 }
 resource "azurerm_linux_virtual_machine" "OraVm" {
   name                            = "${var.prefix}-vm"
-  location                        = azurerm_resource_group.rg.location
-  resource_group_name             = azurerm_resource_group.rg.name
+  location                        = azurerm_resource_group.Rg.location
+  resource_group_name             = azurerm_resource_group.Rg.name
   network_interface_ids           = [azurerm_network_interface.OraNic.id]
   size                            = var.vm_size
   computer_name                   = "OracleVM"

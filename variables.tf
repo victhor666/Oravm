@@ -73,3 +73,4 @@ variable "network_interface" {
   description = "Personalizar interface en el arranque"
   type        = list(map(string))
   default     = []
+}
