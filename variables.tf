@@ -46,7 +46,7 @@ variable "os_publisher" {
   default = {
     OL7 = {
       publisher = "Oracle"
-      offer     = "racle-Linux"
+      offer     = "Oracle-Linux"
       sku       = "ol77-ci-gen2"
     }
   }
