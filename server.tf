@@ -71,4 +71,23 @@ resource "azurerm_linux_virtual_machine" "OraVm" {
   tags = {
     environment = "Orademo"
   }
+###############################
+## Agregamos un disco adicional
+###############################
+resource "azurerm_managed_disk" "disco1" {
+  name                            = "${var.prefix}-vm-disco1"
+  location                        = azurerm_resource_group.Rg.location
+  resource_group_name             = azurerm_resource_group.Rg.name
+  storage_account_type            = "Standard_LRS"
+  create_option                   = "Empty"
+  disk_size_gb                    = 10
+}
+
+resource "azurerm_virtual_machine_data_disk_attachment" "disco1" {
+  managed_disk_id    = azurerm_managed_disk.disco1.id
+  virtual_machine_id = azurerm_virtual_machine.disco1.id
+  lun                = "1"
+  caching            = "ReadWrite"
+}
+
 }

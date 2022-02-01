@@ -35,3 +35,4 @@ sudo firewall-cmd --zone=public --permanent --add-service=http
 sudo firewall-cmd --zone=public --permanent --add-service=https
 sudo firewall-cmd --reload
 sudo cp /usr/share/nginx/html/index.html /usr/share/nginx/html/index.original.html
+sudo mv /tmp/index.html /usr/share/nginx/html/index.html
