@@ -1,7 +1,11 @@
 #!/bin/sh
 sudo echo "Arrancamos el script de instalacion" > /tmp/script.log
 #instalacion de paquetes
-yum install oracle-database-preinstall-19c-1.0-3.el7.x86_64 -y
+sudo yum install oracle-database-preinstall-19c-1.0-3.el7.x86_64 -y
+sudo yum install oracleasm -y
+sudo yum install oracleasm-support.x86_64 -y
+sudo yum install kmod-oracleasm -y
+sudo yum install oracleasmlib -y
 
 #Particionando los discos 
 
