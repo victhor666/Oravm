@@ -11,7 +11,7 @@ resource "azurerm_network_interface" "OraNic" {
   }
 }
 resource "azurerm_public_ip" "IpPublica" {
-  name                = "TerraPublicIp"
+  name                = "IP-Publica"
   resource_group_name = azurerm_resource_group.Rg.name
   location            = azurerm_resource_group.Rg.location
   allocation_method   = "Dynamic"
@@ -51,15 +51,7 @@ resource "azurerm_linux_virtual_machine" "OraVm" {
     sku       = var.os_publisher[var.OS].sku
     version   = "latest"
   }
-
-  # Si comentamos esta línea la máquina se apagara pero no se borrará automaticamente
-  # delete_os_disk_on_termination = true
-  # Y lo mismo con los discos
-  # delete_data_disks_on_termination = true
-
-
-
-  ######################
+ ######################
   # VOLUMEN
   ######################
   os_disk {
@@ -67,10 +59,23 @@ resource "azurerm_linux_virtual_machine" "OraVm" {
     storage_account_type = "Standard_LRS"
     disk_size_gb         = var.osdisk_size
   }
+ provisioner "file" {
+    source = "./main.tf"
+    destination = "/tmp/hola.txt"
+    connection {
+      type = "ssh"
+      user = "azureuser"
+      host = azurerm_public_ip.IpPublica.ip_address
+      private_key = file("~/orauser")
+      timeout  = "3m"
+    }
+  }
+
 
   tags = {
     environment = "Orademo"
   }
+}
 ###############################
 ## Agregamos un disco adicional
 ###############################
@@ -85,9 +90,7 @@ resource "azurerm_managed_disk" "disco1" {
 
 resource "azurerm_virtual_machine_data_disk_attachment" "disco1" {
   managed_disk_id    = azurerm_managed_disk.disco1.id
-  virtual_machine_id = azurerm_virtual_machine.disco1.id
+  virtual_machine_id = azurerm_linux_virtual_machine.OraVm.id
   lun                = "1"
   caching            = "ReadWrite"
-}
-
 }

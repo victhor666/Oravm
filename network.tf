@@ -1,10 +1,3 @@
-terraform {
-  required_version = ">= 1.0.3"
-}
-provider "azurerm" {
-  features {
-  }
-}
 
 #################
 # VNET
