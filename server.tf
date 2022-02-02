@@ -40,7 +40,7 @@ resource "azurerm_linux_virtual_machine" "OraVm" {
 
   admin_ssh_key {
     username   = "azureuser"
-    public_key = file("~/orauser.pub")
+    public_key = file("~/Oravm/orauser.pub")
   }
   ######################
   # IMAGEN
