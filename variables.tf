@@ -34,9 +34,14 @@ variable "Nombre_Instancia" {
   default = "OraVM"
 }
 
-
 variable "osdisk_size" {
   default = "30"
+}
+variable "disco2_size" {
+  default = "5"
+}
+variable "disco3_size" {
+  default = "3"
 }
 variable "vm_size" {
   default = "Standard_B1s"
@@ -47,7 +52,7 @@ variable "os_publisher" {
     OL7 = {
       publisher = "Oracle"
       offer     = "Oracle-Linux"
-      sku       = "ol77-ci-gen2"
+      sku       = "79-gen2"
     }
   }
 }
