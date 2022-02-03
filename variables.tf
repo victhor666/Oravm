@@ -41,7 +41,7 @@ variable "disco2_size" {
   default = "5"
 }
 variable "disco3_size" {
-  default = "30"
+  default = "10"
 }
 variable "vm_size" {
   default = "Standard_B1s"
