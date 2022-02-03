@@ -2,9 +2,9 @@
 
 #variables
 RUTA="https://almacenbinariosoracle.blob.core.windows.net/binariosorcl/"
-FICH1="p31750108_190000_Linux-x86-64.zip"
-FICH2="p31750108_190000_Linux-x86-64.zip"
-FICH3="p31750108_190000_Linux-x86-64.zip"
+FICH1="LINUX.X64_193000_db_home.zip"
+FICH2="LINUX.X64_193000_grid_home.zip"
+FICH3="Opatch_12.2.0.1.21_Linux-x86-64.zip"
 FICH4="p31750108_190000_Linux-x86-64.zip"
 LOG="/tmp/script.log"
 ##################################################################################################
@@ -23,7 +23,6 @@ until [ -b /dev/sdc ]
 do
      sleep 5
 done
-
 echo "formateamos disco2 para software de oracle en xfs" >> $LOG
 sudo parted /dev/sdc --script mklabel gpt mkpart xfspart xfs 0% 100%  >> $LOG
 sudo mkfs.xfs /dev/sdc1
@@ -58,20 +57,19 @@ sudo groupadd -g 54329 asmadmin
 
 #este disco hay que formatearlo aqui para que todo lo del asm este instalado
 echo "formateamos disco3 en asm" >> $LOG
-until [ -b /dev/sdd ]
-do
-     sleep 5
-done
 
-sudo parted /dev/sdd --script mklabel gpt mkpart xfspart xfs 0% 100% >> $LOG
+
+sudo parted /dev/sdd --script mklabel gpt mkpart xfspart xfs 0% 100% 
 sudo oracleasm createdisk DATA /dev/sdd1 >> $LOG
 sudo oracleasm scandisks >> $LOG
 sudo oracleasm listdisks >> $LOG
 
 
 # Descarga de software
-# sudo wget $RUTA$FICH1 -O /tmp/$FICH1 -b
-# sudo wget $RUTA$FICH2 -O /tmp/$FICH2 -b
+sudo wget $RUTA$FICH1 -O /tmp/$FICH1 -b
+sudo wget $RUTA$FICH2 -O /tmp/$FICH2 -b
 sudo wget $RUTA$FICH3 -O /tmp/$FICH3 -b
-# sudo wget $RUTA$FICH4 -O /tmp/$FICH4 -b
+sudo wget $RUTA$FICH4 -O /tmp/$FICH4 -b
 
+sudo unzip /tmp/$FICH2 -d /oracle/GRIDINF/19C/soft
+sudo unzip /tmp/$FICH1 -d /oracle/database/19C/soft
