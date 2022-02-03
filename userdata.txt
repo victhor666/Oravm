@@ -1,41 +1,67 @@
 #!/bin/sh
-sudo echo "Arrancamos el script de instalacion" > /tmp/script.log
+
+#variables
+RUTA="https://almacenbinariosoracle.blob.core.windows.net/binariosorcl/"
+FICH1="p31750108_190000_Linux-x86-64.zip"
+FICH2="p31750108_190000_Linux-x86-64.zip"
+FICH3="p31750108_190000_Linux-x86-64.zip"
+FICH4="p31750108_190000_Linux-x86-64.zip"
+LOG="/tmp/script.log"
+
+sudo echo "Arrancamos el script de instalacion" > $LOG
 
 #Particionando los discos 
 
-echo "formateamos disco2" >> /tmp/script.log
+echo "formateamos disco2 para software de oracle en xfs" >> $LOG
 sudo parted /dev/sdc --script mklabel gpt mkpart xfspart xfs 0% 100%
 sudo mkfs.xfs /dev/sdc1
 sudo partprobe /dev/sdc1
-sudo mkdir -p /oradata
-sudo mount /dev/sdc1 /oradata
-sudo echo UUID=\"`(blkid /dev/sdc1 -s UUID -o value)`\" /oradata        xfs     defaults,nofail         1       2 >> /etc/fstab
+sudo mkdir -p /oracle
+sudo mount /dev/sdc1 /oracle
+sudo echo UUID=\"`(blkid /dev/sdc1 -s UUID -o value)`\" /oracle        xfs     defaults,nofail         1       2 >> /etc/fstab
 
-echo "formateamos disco3" >> /tmp/script.log
-sudo parted /dev/sdd --script mklabel gpt mkpart xfspart xfs 0% 100%
-sudo mkfs.xfs /dev/sdd1
-sudo partprobe /dev/sdd1
-sudo mkdir -p /data
-sudo mount /dev/sdd1 /data
-sudo echo UUID=\"`(blkid /dev/sdd1 -s UUID -o value)`\" /data        xfs     defaults,nofail         1       2 >> /etc/fstab
 
 # Usamos el waagent para poner la swap
-# echo "agregando swap" >>  >> /tmp/script.log
+# echo "agregando swap" >>  >> $LOG
 # sudo sed -i 's/ResourceDisk.EnableSwap=n/ResourceDisk.EnableSwap=y/g' /etc/waagent.conf
-# sudo cat /etc/waagent.conf |grep Swap >> /tmp/script.log
+# sudo cat /etc/waagent.conf |grep Swap >> $LOG
 # sudo sed -i 's/ResourceDisk.SwapSizeMB=0/ResourceDisk.SwapSizeMB=2000/g' /etc/waagent.conf
-# sudo service waagent restart >> /tmp/script.log
+# sudo service waagent restart >> $LOG
 
 #instalacion de paquetes
-echo "instalamos paquetes" >> /tmp/script.log
-sudo yum install oracle-database-preinstall-19c-1.0-3.el7.x86_64 -y >> /tmp/script.log
-sudo yum install oracleasm -y >> /tmp/script.log
-sudo yum install oracleasm-support.x86_64 -y >> /tmp/script.log
-sudo yum install kmod-oracleasm -y >> /tmp/script.log
-# sudo yum install oracleasmlib -y >> /tmp/script.log
+echo "instalamos paquetes" >> $LOG
+sudo yum install   oracle-database-preinstall-19c-1.0-3.el7.x86_64 -y >> $LOG
+sudo yum install   oracleasm -y >> $LOG
+sudo yum install   oracleasm-support.x86_64 -y >> $LOG
+sudo yum install   kmod-oracleasm -y >> $LOG
+# sudo yum install oracleasmlib -y >> $LOG
+
+
+sudo oracleasm configure >> $LOG
+sudo oracleasm init >> $LOG
 
 #agregamos grupos
-sudo echo "Agregamos grupos" >> /tmp/script.log
+sudo echo "Agregamos grupos" >> $LOG
 sudo groupadd -g 54327 asmdba
 sudo groupadd -g 54328 asmoper
 sudo groupadd -g 54329 asmadmin
+
+#tareas administrativas
+sudo chown -R oracle:oinstall /oracle
+sudo mkdir -p /oracle/GRIDINF/19C/soft
+sudo mkdir -p /oracle/database/19C/soft
+
+#este disco hay que formatearlo aqui para que todo lo del asm este instalado
+echo "formateamos disco3 en asm" >> $LOG
+sudo parted /dev/sdd --script mklabel gpt mkpart xfspart xfs 0% 100%
+sudo oracleasm createdisk DATA /dev/sdd1 >> $LOG
+sudo oracleasm scandisks >> $LOG
+sudo oracleasm listdisks >> $LOG
+
+
+# Descarga de software
+# sudo wget $RUTA$FICH1 -O /tmp/$FICH1 -b
+# sudo wget $RUTA$FICH2 -O /tmp/$FICH2 -b
+sudo wget $RUTA$FICH3 -O /tmp/$FICH3 -b
+# sudo wget $RUTA$FICH4 -O /tmp/$FICH4 -b
+
