@@ -7,34 +7,15 @@ FICH2="p31750108_190000_Linux-x86-64.zip"
 FICH3="p31750108_190000_Linux-x86-64.zip"
 FICH4="p31750108_190000_Linux-x86-64.zip"
 LOG="/tmp/script.log"
-
+##################################################################################################
 sudo echo "Arrancamos el script de instalacion" > $LOG
 
-# Usamos el waagent para poner la swap
+# Usamos el waagent para poner la swap. Lo idear es no usar esto por portabilidad a otros clouders
 # echo "agregando swap" >>  >> $LOG
 # sudo sed -i 's/ResourceDisk.EnableSwap=n/ResourceDisk.EnableSwap=y/g' /etc/waagent.conf
 # sudo cat /etc/waagent.conf |grep Swap >> $LOG
 # sudo sed -i 's/ResourceDisk.SwapSizeMB=0/ResourceDisk.SwapSizeMB=2000/g' /etc/waagent.conf
 # sudo service waagent restart >> $LOG
-
-#instalacion de paquetes
-echo "instalamos paquetes" >> $LOG
-sudo yum install   oracle-database-preinstall-19c-1.0-3.el7.x86_64 -y >> $LOG
-sudo yum install   oracleasm -y >> $LOG
-sudo yum install   oracleasm-support.x86_64 -y >> $LOG
-sudo yum install   kmod-oracleasm -y >> $LOG
-# sudo yum install oracleasmlib -y >> $LOG
-
-#configuraciones asm
-sudo oracleasm configure >> $LOG
-sudo oracleasm init >> $LOG
-
-#agregamos grupos
-sudo echo "Agregamos grupos" >> $LOG
-sudo groupadd -g 54327 asmdba
-sudo groupadd -g 54328 asmoper
-sudo groupadd -g 54329 asmadmin
-
 
 #Particionando los discos 
 
@@ -50,6 +31,25 @@ sudo echo UUID=\"`(blkid /dev/sda1 -s UUID -o value)`\" /oracle        xfs     d
 sudo chown -R oracle:oinstall /oracle
 sudo mkdir -p /oracle/GRIDINF/19C/soft
 sudo mkdir -p /oracle/database/19C/soft
+
+#instalacion de paquetes
+echo "instalamos paquetes" >> $LOG
+sudo yum install oracle-database-preinstall-19c-1.0-3.el7.x86_64 -y >> $LOG
+sudo yum install oracleasm -y >> $LOG
+sudo yum install oracleasm-support.x86_64 -y >> $LOG
+sudo yum install kmod-oracleasm -y >> $LOG
+# sudo yum install oracleasmlib -y >> $LOG
+
+#configuraciones asm
+sudo oracleasm configure >> $LOG
+sudo oracleasm init >> $LOG
+
+#agregamos grupos
+sudo echo "Agregamos grupos" >> $LOG
+sudo groupadd -g 54327 asmdba
+sudo groupadd -g 54328 asmoper
+sudo groupadd -g 54329 asmadmin
+
 
 #este disco hay que formatearlo aqui para que todo lo del asm este instalado
 echo "formateamos disco3 en asm" >> $LOG
