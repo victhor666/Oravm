@@ -124,7 +124,7 @@ resource "azurerm_virtual_machine_data_disk_attachment" "disco2" {
   lun                = "1"
   caching            = "ReadWrite"
 }
-resource "null_resource" "previous" {}
+resource "null_resource" "previous2" {}
 
 resource "time_sleep" "wait_20_seconds" {
   depends_on = [null_resource.previous]
