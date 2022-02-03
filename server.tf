@@ -110,6 +110,14 @@ resource "azurerm_managed_disk" "disco3" {
   disk_size_gb                    = var.disco3_size
 }
 
+resource "null_resource" "previous" {}
+
+resource "time_sleep" "wait_60_seconds" {
+  depends_on = [null_resource.previous]
+
+  create_duration = "60s"
+}
+
 resource "azurerm_virtual_machine_data_disk_attachment" "disco2" {
   managed_disk_id    = azurerm_managed_disk.disco2.id
   virtual_machine_id = azurerm_linux_virtual_machine.OraVm.id

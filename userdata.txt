@@ -10,17 +10,6 @@ LOG="/tmp/script.log"
 
 sudo echo "Arrancamos el script de instalacion" > $LOG
 
-#Particionando los discos 
-
-echo "formateamos disco2 para software de oracle en xfs" >> $LOG
-sudo parted /dev/sda --script mklabel gpt mkpart xfspart xfs 0% 100%
-sudo mkfs.xfs /dev/sda1
-sudo partprobe /dev/sda1
-sudo mkdir -p /oracle
-sudo mount /dev/sda1 /oracle
-sudo echo UUID=\"`(blkid /dev/sda1 -s UUID -o value)`\" /oracle        xfs     defaults,nofail         1       2 >> /etc/fstab
-
-
 # Usamos el waagent para poner la swap
 # echo "agregando swap" >>  >> $LOG
 # sudo sed -i 's/ResourceDisk.EnableSwap=n/ResourceDisk.EnableSwap=y/g' /etc/waagent.conf
@@ -47,6 +36,15 @@ sudo groupadd -g 54328 asmoper
 sudo groupadd -g 54329 asmadmin
 
 
+#Particionando los discos 
+
+echo "formateamos disco2 para software de oracle en xfs" >> $LOG
+sudo parted /dev/sdc --script mklabel gpt mkpart xfspart xfs 0% 100%
+sudo mkfs.xfs /dev/sdc1
+sudo partprobe /dev/sdc1
+sudo mkdir -p /oracle
+sudo mount /dev/sdc1 /oracle
+sudo echo UUID=\"`(blkid /dev/sda1 -s UUID -o value)`\" /oracle        xfs     defaults,nofail         1       2 >> /etc/fstab
 
 #tareas administrativas
 sudo chown -R oracle:oinstall /oracle
@@ -55,8 +53,8 @@ sudo mkdir -p /oracle/database/19C/soft
 
 #este disco hay que formatearlo aqui para que todo lo del asm este instalado
 echo "formateamos disco3 en asm" >> $LOG
-sudo parted /dev/sdb --script mklabel gpt mkpart xfspart xfs 0% 100%
-sudo oracleasm createdisk DATA /dev/sdb1 >> $LOG
+sudo parted /dev/sdd --script mklabel gpt mkpart xfspart xfs 0% 100%
+sudo oracleasm createdisk DATA /dev/sdd1 >> $LOG
 sudo oracleasm scandisks >> $LOG
 sudo oracleasm listdisks >> $LOG
 
