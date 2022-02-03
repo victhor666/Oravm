@@ -124,6 +124,13 @@ resource "azurerm_virtual_machine_data_disk_attachment" "disco2" {
   lun                = "1"
   caching            = "ReadWrite"
 }
+resource "null_resource" "previous" {}
+
+resource "time_sleep" "wait_20_seconds" {
+  depends_on = [null_resource.previous]
+
+  create_duration = "20s"
+}
 resource "azurerm_virtual_machine_data_disk_attachment" "disco3" {
   managed_disk_id    = azurerm_managed_disk.disco3.id
   virtual_machine_id = azurerm_linux_virtual_machine.OraVm.id
