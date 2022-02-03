@@ -112,10 +112,10 @@ resource "azurerm_managed_disk" "disco3" {
 
 resource "null_resource" "previous" {}
 
-resource "time_sleep" "wait_60_seconds" {
+resource "time_sleep" "wait_90_seconds" {
   depends_on = [null_resource.previous]
 
-  create_duration = "60s"
+  create_duration = "90s"
 }
 
 resource "azurerm_virtual_machine_data_disk_attachment" "disco2" {
@@ -123,17 +123,14 @@ resource "azurerm_virtual_machine_data_disk_attachment" "disco2" {
   virtual_machine_id = azurerm_linux_virtual_machine.OraVm.id
   lun                = "1"
   caching            = "ReadWrite"
+depends_on = [null_resource.previous]
 }
-resource "null_resource" "previous2" {}
 
-resource "time_sleep" "wait_20_seconds" {
-  depends_on = [null_resource.previous]
 
-  create_duration = "20s"
-}
 resource "azurerm_virtual_machine_data_disk_attachment" "disco3" {
   managed_disk_id    = azurerm_managed_disk.disco3.id
   virtual_machine_id = azurerm_linux_virtual_machine.OraVm.id
   lun                = "2"
   caching            = "ReadWrite"
+  depends_on =[azurerm_virtual_machine_data_disk_attachment.disco2]
 }
