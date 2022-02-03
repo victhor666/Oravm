@@ -1,11 +1,5 @@
 #!/bin/sh
 sudo echo "Arrancamos el script de instalacion" > /tmp/script.log
-#instalacion de paquetes
-sudo yum install oracle-database-preinstall-19c-1.0-3.el7.x86_64 -y
-sudo yum install oracleasm -y
-sudo yum install oracleasm-support.x86_64 -y
-sudo yum install kmod-oracleasm -y
-sudo yum install oracleasmlib -y
 
 #Particionando los discos 
 
@@ -17,16 +11,31 @@ sudo mkdir -p /oradata
 sudo mount /dev/sdc1 /oradata
 sudo echo UUID=\"`(blkid /dev/sdc1 -s UUID -o value)`\" /oradata        xfs     defaults,nofail         1       2 >> /etc/fstab
 
-#
+echo "formateamos disco3" >> /tmp/script.log
+sudo parted /dev/sdd --script mklabel gpt mkpart xfspart xfs 0% 100%
+sudo mkfs.xfs /dev/sdd1
+sudo partprobe /dev/sdd1
+sudo mkdir -p /data
+sudo mount /dev/sdd1 /data
+sudo echo UUID=\"`(blkid /dev/sdd1 -s UUID -o value)`\" /data        xfs     defaults,nofail         1       2 >> /etc/fstab
 
-echo "formateamos disco3 dedicado a swap" >> /tmp/script.log
-mkswap -c /dev/sdd1
-sudo swapon -U `(blkid /dev/sdd1 -s UUID -o value)` 
-echo UUID=\"`(blkid /dev/sdX1 -s UUID -o value)`\" swap    sw      0       0 >> /etc/fstab
+# Usamos el waagent para poner la swap
+# echo "agregando swap" >>  >> /tmp/script.log
+# sudo sed -i 's/ResourceDisk.EnableSwap=n/ResourceDisk.EnableSwap=y/g' /etc/waagent.conf
+# sudo cat /etc/waagent.conf |grep Swap >> /tmp/script.log
+# sudo sed -i 's/ResourceDisk.SwapSizeMB=0/ResourceDisk.SwapSizeMB=2000/g' /etc/waagent.conf
+# sudo service waagent restart >> /tmp/script.log
+
+#instalacion de paquetes
+echo "instalamos paquetes" >> /tmp/script.log
+sudo yum install oracle-database-preinstall-19c-1.0-3.el7.x86_64 -y >> /tmp/script.log
+sudo yum install oracleasm -y >> /tmp/script.log
+sudo yum install oracleasm-support.x86_64 -y >> /tmp/script.log
+sudo yum install kmod-oracleasm -y >> /tmp/script.log
+# sudo yum install oracleasmlib -y >> /tmp/script.log
 
 #agregamos grupos
 sudo echo "Agregamos grupos" >> /tmp/script.log
 sudo groupadd -g 54327 asmdba
 sudo groupadd -g 54328 asmoper
 sudo groupadd -g 54329 asmadmin
-
