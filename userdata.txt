@@ -10,12 +10,14 @@ LOG="/tmp/script.log"
 ##################################################################################################
 sudo echo "Arrancamos el script de instalacion" > $LOG
 
-# Usamos el waagent para poner la swap. Lo idear es no usar esto por portabilidad a otros clouders
-# echo "agregando swap" >>  >> $LOG
-# sudo sed -i 's/ResourceDisk.EnableSwap=n/ResourceDisk.EnableSwap=y/g' /etc/waagent.conf
-# sudo cat /etc/waagent.conf |grep Swap >> $LOG
-# sudo sed -i 's/ResourceDisk.SwapSizeMB=0/ResourceDisk.SwapSizeMB=2000/g' /etc/waagent.conf
-# sudo service waagent restart >> $LOG
+# Usamos el waagent para poner la swap. Lo idear es no usar esto por portabilidad a otros clouders...pero es tan comodo (ojo, la maquina tiene que tener al menos 15GB de espacio temporal)
+echo "agregando swap" >>  >> $LOG
+sudo service waagent stop >> $LOG
+sudo sed -i 's/ResourceDisk.Format=n/ResourceDisk.Format=y/g'/etc/waagent.conf
+sudo sed -i 's/ResourceDisk.EnableSwap=n/ResourceDisk.EnableSwap=y/g' /etc/waagent.conf
+sudo sed -i 's/ResourceDisk.SwapSizeMB=0/ResourceDisk.SwapSizeMB=15000/g' /etc/waagent.conf
+sudo cat /etc/waagent.conf |grep Swap >> $LOG
+sudo service waagent start >> $LOG
 
 #Particionando los discos
 sudo echo "Esperamos a que se monte el disco"
@@ -29,16 +31,16 @@ sudo mkfs.xfs /dev/sdc1
 sudo partprobe /dev/sdc1 
 sudo mkdir -p /oracle
 sudo mount /dev/sdc1 /oracle
-sudo echo UUID=\"`(blkid /dev/sda1 -s UUID -o value)`\" /oracle        xfs     defaults,nofail         1       2 >> /etc/fstab
+sudo echo UUID=\"`(blkid /dev/sdc1 -s UUID -o value)`\" /oracle        xfs     defaults,nofail         1       2 >> /etc/fstab
 
 #tareas administrativas
-sudo chown -R oracle:oinstall /oracle
 sudo mkdir -p /oracle/GRIDINF/19C/soft
 sudo mkdir -p /oracle/database/19C/soft
 
 # instalacion de paquetes
 # echo "instalamos paquetes" >> $LOG
 # sudo yum install oracle-database-preinstall-19c-1.0-3.el7.x86_64 -y >> $LOG
+sudo chown -R oracle:oinstall /oracle
 # sudo yum install oracleasm -y >> $LOG
 # sudo yum install oracleasm-support.x86_64 -y >> $LOG
 # sudo yum install kmod-oracleasm -y >> $LOG
