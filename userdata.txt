@@ -12,12 +12,20 @@ sudo echo "Arrancamos el script de instalacion" > $LOG
 
 # Usamos el waagent para poner la swap. Lo idear es no usar esto por portabilidad a otros clouders...pero es tan comodo (ojo, la maquina tiene que tener al menos 15GB de espacio temporal)
 echo "agregando swap" >>  >> $LOG
+sudo echo "esperando a que tengamos fichero del agente" >> $LOG
+until [ -f /etc/waagent.conf ]
+do
+     sleep 10
+done
 sudo service waagent stop >> $LOG
 sudo sed -i 's/ResourceDisk.Format=n/ResourceDisk.Format=y/g' /etc/waagent.conf
 sudo sed -i 's/ResourceDisk.EnableSwap=n/ResourceDisk.EnableSwap=y/g' /etc/waagent.conf
 sudo sed -i 's/ResourceDisk.SwapSizeMB=0/ResourceDisk.SwapSizeMB=15000/g' /etc/waagent.conf
 sudo cat /etc/waagent.conf |grep Swap >> $LOG
 sudo service waagent start >> $LOG
+
+
+
 
 #Particionando los discos
 sudo echo "Esperamos a que se monte el disco"
@@ -74,5 +82,6 @@ sudo wget $RUTA$FICH2 -O /tmp/$FICH2
 # sudo wget $RUTA$FICH3 -O /tmp/$FICH3 
 # sudo wget $RUTA$FICH4 -O /tmp/$FICH4 
 
-sudo unzip /tmp/$FICH2 -d /oracle/GRIDINF/19C/soft
 sudo unzip /tmp/$FICH1 -d /oracle/database/19C/soft
+sudo unzip /tmp/$FICH2 -d /oracle/GRIDINF/19C/soft
+sudo chown -R oracle:oinstall /oracle
