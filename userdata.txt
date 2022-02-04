@@ -11,7 +11,7 @@ LOG="/tmp/script.log"
 sudo echo "Arrancamos el script de instalacion" > $LOG
 
 # Usamos el waagent para poner la swap. Lo idear es no usar esto por portabilidad a otros clouders...pero es tan comodo (ojo, la maquina tiene que tener al menos 15GB de espacio temporal)
-echo "agregando swap" >>  >> $LOG
+echo "agregando swap" >> $LOG
 sudo echo "esperando a que tengamos fichero del agente" >> $LOG
 until [ -f /etc/waagent.conf ]
 do
