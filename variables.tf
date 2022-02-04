@@ -44,7 +44,7 @@ variable "disco3_size" {
   default = "10"
 }
 variable "vm_size" {
-  default = "Standard_B1s"
+  default = "Standard_B2ms"
 }
 
 variable "os_publisher" {

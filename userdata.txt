@@ -36,17 +36,17 @@ sudo chown -R oracle:oinstall /oracle
 sudo mkdir -p /oracle/GRIDINF/19C/soft
 sudo mkdir -p /oracle/database/19C/soft
 
-#instalacion de paquetes
-echo "instalamos paquetes" >> $LOG
-sudo yum install oracle-database-preinstall-19c-1.0-3.el7.x86_64 -y >> $LOG
-sudo yum install oracleasm -y >> $LOG
-sudo yum install oracleasm-support.x86_64 -y >> $LOG
-sudo yum install kmod-oracleasm -y >> $LOG
+# instalacion de paquetes
+# echo "instalamos paquetes" >> $LOG
+# sudo yum install oracle-database-preinstall-19c-1.0-3.el7.x86_64 -y >> $LOG
+# sudo yum install oracleasm -y >> $LOG
+# sudo yum install oracleasm-support.x86_64 -y >> $LOG
+# sudo yum install kmod-oracleasm -y >> $LOG
 # sudo yum install oracleasmlib -y >> $LOG
 
 #configuraciones asm
-sudo oracleasm configure >> $LOG
-sudo oracleasm init >> $LOG
+# sudo oracleasm configure >> $LOG
+# sudo oracleasm init >> $LOG
 
 #agregamos grupos
 sudo echo "Agregamos grupos" >> $LOG
