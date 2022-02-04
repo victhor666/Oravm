@@ -1,11 +1,16 @@
 #!/bin/sh
 
 #variables
+
 RUTA="https://almacenbinariosoracle.blob.core.windows.net/binariosorcl/"
+
 FICH1="LINUX.X64_193000_db_home.zip"
 FICH2="LINUX.X64_193000_grid_home.zip"
 FICH3="Opatch_12.2.0.1.21_Linux-x86-64.zip"
 FICH4="p31750108_190000_Linux-x86-64.zip"
+CONFIG1="auto_install_oracle_database_19c.rsp"
+CONFIG2="auto_install_oracle_grid_19c.rsp"
+
 LOG="/tmp/script.log"
 ##################################################################################################
 sudo echo "Arrancamos el script de instalacion" > $LOG
@@ -24,7 +29,10 @@ sudo sed -i 's/ResourceDisk.SwapSizeMB=0/ResourceDisk.SwapSizeMB=15000/g' /etc/w
 sudo cat /etc/waagent.conf |grep Swap >> $LOG
 sudo service waagent start >> $LOG
 
-
+# swap en otras maquinas u otros vendors (aws)
+# sudo fallocate -l 15G /swapfile
+# sudo chmod 600 /swapfile
+# sudo swapon /swapfile
 
 
 #Particionando los discos
