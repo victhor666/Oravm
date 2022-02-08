@@ -38,7 +38,7 @@ variable "osdisk_size" {
   default = "30"
 }
 variable "disco2_size" {
-  default = "7"
+  default = "30"
 }
 variable "disco3_size" {
   default = "10"
