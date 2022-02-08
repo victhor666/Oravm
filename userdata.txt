@@ -87,8 +87,8 @@ sudo oracleasm listdisks >> $LOG
 # Descarga de software
 sudo wget $RUTA$FICH1 -O /tmp/$FICH1 
 sudo wget $RUTA$FICH2 -O /tmp/$FICH2 
-# sudo wget $RUTA$FICH3 -O /tmp/$FICH3 
-# sudo wget $RUTA$FICH4 -O /tmp/$FICH4 
+sudo wget $RUTA$FICH3 -O /tmp/$FICH3 
+sudo wget $RUTA$FICH4 -O /tmp/$FICH4 
 
 sudo unzip /tmp/$FICH1 -d /oracle/database/19C/soft
 sudo unzip /tmp/$FICH2 -d /oracle/GRIDINF/19C/soft
