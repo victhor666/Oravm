@@ -8,8 +8,8 @@ FICH1="LINUX.X64_193000_db_home.zip"
 FICH2="LINUX.X64_193000_grid_home.zip"
 FICH3="Opatch_12.2.0.1.21_Linux-x86-64.zip"
 FICH4="p31750108_190000_Linux-x86-64.zip"
-CONFIG1="auto_install_oracle_database_19c.rsp"
-CONFIG2="auto_install_oracle_grid_19c.rsp"
+CONFIG1="auto_install_oracle_grid_19c.rsp"
+CONFIG2="auto_install_oracle_database_19c.rsp"
 
 LOG="/tmp/script.log"
 ##################################################################################################
@@ -50,6 +50,7 @@ sudo mount /dev/sdc1 /oracle
 sudo echo UUID=\"`(blkid /dev/sdc1 -s UUID -o value)`\" /oracle        xfs     defaults,nofail         1       2 >> /etc/fstab
 
 #tareas administrativas
+echo "----------------Creación de directorios oracle----------------">> $LOG
 sudo mkdir -p /oracle/GRIDINF/19C/soft
 sudo mkdir -p /oracle/database/19C/soft
 
@@ -64,6 +65,7 @@ sudo yum install kmod-oracleasm -y >> $LOG
 # sudo yum install oracleasmlib -y >> $LOG
 
 #configuraciones asm
+echo "----------------Configuracion asm----------------">> $LOG
 sudo oracleasm configure >> $LOG
 sudo oracleasm init >> $LOG
 
@@ -77,7 +79,7 @@ sudo groupadd -g 54329 asmadmin
 #este disco hay que formatearlo aqui para que todo lo del asm este instalado
 echo "formateamos disco3 en asm" >> $LOG
 
-
+echo "----------------Creacion de disco en asm----------------">> $LOG
 sudo parted /dev/sdd --script mklabel gpt mkpart xfspart xfs 0% 100% 
 sudo oracleasm createdisk DATA /dev/sdd1 >> $LOG
 sudo oracleasm scandisks >> $LOG
@@ -85,11 +87,54 @@ sudo oracleasm listdisks >> $LOG
 
 
 # Descarga de software
+echo "----------------Descarga de ficheros del repositorio----------------">> $LOG
 sudo wget $RUTA$FICH1 -O /tmp/$FICH1 
 sudo wget $RUTA$FICH2 -O /tmp/$FICH2 
 sudo wget $RUTA$FICH3 -O /tmp/$FICH3 
 sudo wget $RUTA$FICH4 -O /tmp/$FICH4 
+sudo wget $RUTA$CONFIG1 -O /tmp/$CONFIG1
+sudo wget $RUTA$CONFIG2 -O /tmp/$CONFIG2
+echo "----------------FIN Descarga de ficheros del repositorio----------------">> $LOG
 
+# Descomprimimos el grid y los fuentes de oracle
 sudo unzip /tmp/$FICH1 -d /oracle/database/19C/soft
 sudo unzip /tmp/$FICH2 -d /oracle/GRIDINF/19C/soft
 sudo chown -R oracle:oinstall /oracle
+
+
+# NOTA---tema importante, poner una maquina con al menos 8GB de memoria
+# prerequisitos
+echo "----------------Prerequisitos del grid de oracle----------------">> $LOG
+sudo su - oracle -c "/oracle/GRIDINF/19C/soft/runcluvfy.sh stage -pre hacfg" >> $LOG
+
+#cambio de permisos del dev de disco para que el usuario de oracle tenga acceso 
+sudo chown oracle:asmadmin /dev/oracleasm/disks/DATA
+sudo chmod 660 /dev/oracleasm/disks/DATA
+
+#añadir grupos a oracle
+echo "----------------Incorporamos los grupos al usuario de oracle----------------">> $LOG
+usermod -g oinstall -G dba,oper,backupdba,dgdba,kmdba,asmdba,asmoper,asmadmin,racdba oracle
+
+# poner contraseña en auto_install_oracle_grid_19c.rsp para dos variables (nos aseguramos de una mayuscula, minuscula numero y caracter)
+PASS=aB`echo $RANDOM | md5sum | head -c 6`3.
+
+sudo sed -i "s/oracle.install.asm.SYSASMPassword=/oracle.install.asm.SYSASMPassword=$PASS/g" /tmp/auto_install_oracle_grid_19c.rsp
+sudo sed -i "s/oracle.install.asm.monitorPassword=/oracle.install.asm.monitorPassword=$PASS/g" /tmp/auto_install_oracle_grid_19c.rsp
+
+#creamos otro par de directorios
+echo "----------------Creacion de directorios y cambio de permisos----------------">> $LOG
+sudo mkdir /oracle_base
+sudo chown oracle:oinstall /oracle_base
+sudo chmod 755 /oracle_base
+sudo chown oracle:oinstall /oraInventory/
+sudo chmod 755 /oraInventory/
+
+#ejecutamos la instalacion de grid
+echo "----------------Instalacion de grid----------------">> $LOG
+/oracle/GRIDINF/19C/soft/gridSetup.sh -silent -responseFile /tmp/auto_install_oracle_grid_19c.rsp
+
+#ejecutamos tal y como nos piden
+echo "----------------Ejecucion de scripts de root----------------">> $LOG
+sudo /oraInventory/orainstRoot.sh
+sudo /oracle/GRIDINF/19C/soft/root.sh
+echo "----------------Fin de la instalacion----------------">> $LOG
