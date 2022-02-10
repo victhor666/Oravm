@@ -1,20 +1,19 @@
 #!/bin/sh
 
 #variables
+##################################################################################################
 
 RUTA="https://almacenbinariosoracle.blob.core.windows.net/binariosorcl/"
-
 FICH1="LINUX.X64_193000_db_home.zip"
 FICH2="LINUX.X64_193000_grid_home.zip"
 FICH3="Opatch_12.2.0.1.21_Linux-x86-64.zip"
 FICH4="p31750108_190000_Linux-x86-64.zip"
 CONFIG1="auto_install_oracle_grid_19c.rsp"
 CONFIG2="auto_install_oracle_database_19c.rsp"
-
 LOG="/tmp/script.log"
 ##################################################################################################
-sudo echo "Arrancamos el script de instalacion" > $LOG
 
+sudo echo "Arrancamos el script de instalacion" > $LOG
 # Usamos el waagent para poner la swap. Lo idear es no usar esto por portabilidad a otros clouders...pero es tan comodo (ojo, la maquina tiene que tener al menos 15GB de espacio temporal)
 echo "agregando swap" >> $LOG
 sudo echo "esperando a que tengamos fichero del agente" >> $LOG
@@ -28,19 +27,13 @@ sudo sed -i 's/ResourceDisk.EnableSwap=n/ResourceDisk.EnableSwap=y/g' /etc/waage
 sudo sed -i 's/ResourceDisk.SwapSizeMB=0/ResourceDisk.SwapSizeMB=15000/g' /etc/waagent.conf
 sudo cat /etc/waagent.conf |grep Swap >> $LOG
 sudo service waagent start >> $LOG
-
-# swap en otras maquinas u otros vendors (aws)
-# sudo fallocate -l 15G /swapfile
-# sudo chmod 600 /swapfile
-# sudo swapon /swapfile
-
-
 #Particionando los discos
 sudo echo "Esperamos a que se monte el disco"
 until [ -b /dev/sdc ]
 do
      sleep 5
 done
+
 echo "formateamos disco2 para software de oracle en xfs" >> $LOG
 sudo parted /dev/sdc --script mklabel gpt mkpart xfspart xfs 0% 100%  >> $LOG
 sudo mkfs.xfs /dev/sdc1
@@ -100,12 +93,15 @@ echo "----------------FIN Descarga de ficheros del repositorio----------------">
 sudo unzip /tmp/$FICH1 -d /oracle/database/19C/soft
 sudo unzip /tmp/$FICH2 -d /oracle/GRIDINF/19C/soft
 sudo chown -R oracle:oinstall /oracle
-
-
 # NOTA---tema importante, poner una maquina con al menos 8GB de memoria
+
 # prerequisitos
 echo "----------------Prerequisitos del grid de oracle----------------">> $LOG
 sudo su - oracle -c "/oracle/GRIDINF/19C/soft/runcluvfy.sh stage -pre hacfg" >> $LOG
+
+#quitamos firewalld
+sudo systemctl stop firewalld.service
+sudo systemctl disable firewalld.service
 
 #cambio de permisos del dev de disco para que el usuario de oracle tenga acceso 
 sudo chown oracle:asmadmin /dev/oracleasm/disks/DATA
@@ -117,24 +113,48 @@ usermod -g oinstall -G dba,oper,backupdba,dgdba,kmdba,asmdba,asmoper,asmadmin,ra
 
 # poner contraseña en auto_install_oracle_grid_19c.rsp para dos variables (nos aseguramos de una mayuscula, minuscula numero y caracter)
 PASS=aB`echo $RANDOM | md5sum | head -c 6`3.
-
-sudo sed -i "s/oracle.install.asm.SYSASMPassword=/oracle.install.asm.SYSASMPassword=$PASS/g" /tmp/auto_install_oracle_grid_19c.rsp
-sudo sed -i "s/oracle.install.asm.monitorPassword=/oracle.install.asm.monitorPassword=$PASS/g" /tmp/auto_install_oracle_grid_19c.rsp
+sudo sed -i "s/oracle.install.asm.SYSASMPassword=/oracle.install.asm.SYSASMPassword=$PASS/g" /tmp/$CONFIG1
+sudo sed -i "s/oracle.install.asm.monitorPassword=/oracle.install.asm.monitorPassword=$PASS/g" /tmp/$CONFIG1
 
 #creamos otro par de directorios
 echo "----------------Creacion de directorios y cambio de permisos----------------">> $LOG
 sudo mkdir /oracle_base
 sudo chown oracle:oinstall /oracle_base
 sudo chmod 755 /oracle_base
+sudo mkdir /oraInventory/
 sudo chown oracle:oinstall /oraInventory/
 sudo chmod 755 /oraInventory/
 
-#ejecutamos la instalacion de grid
-echo "----------------Instalacion de grid----------------">> $LOG
-/oracle/GRIDINF/19C/soft/gridSetup.sh -silent -responseFile /tmp/auto_install_oracle_grid_19c.rsp
+echo "----------------verificacion de que se cumplen los requisitos----------------">> $LOG
+sudo su - oracle -c "/oracle/GRIDINF/19C/soft/runcluvfy.sh stage -pre hacfg" >> $LOG
 
-#ejecutamos tal y como nos piden
-echo "----------------Ejecucion de scripts de root----------------">> $LOG
+#ejecutamos la instalacion de grid
+sudo echo "----------------Instalacion de grid----------------">> $LOG
+sudo su - oracle -c "/oracle/GRIDINF/19C/soft/gridSetup.sh -silent -responseFile /tmp/$CONFIG1" >> $LOG
+
+#Instalacion de oracle
+sudo echo "----------------Ejecucion de scripts de root----------------">> $LOG
 sudo /oraInventory/orainstRoot.sh
-sudo /oracle/GRIDINF/19C/soft/root.sh
-echo "----------------Fin de la instalacion----------------">> $LOG
+sudo /oracle/GRIDINF/19C/soft/root.sh >> $LOG 
+sudo echo "----------------validando requisitos de instalacion----------------">> $LOG
+sudo su - oracle -c "/oracle/GRIDINF/19C/soft/gridSetup.sh -executeConfigTools -responseFile /tmp/$CONFIG1 -silent"
+sudo echo "----------------validacion de arranque----------------">> $LOG
+sudo /oracle/GRIDINF/19C/soft/bin/crsctl stat res -t >> $LOG
+sudo echo "----------------Prerequisitos instalacion oracle----------------">> $LOG
+sudo su - oracle -c "/oracle/database/19C/soft/runInstaller -executePrereqs -silent -responseFile /tmp/$CONFIG2" >> $LOG
+sudo su - oracle -c "/oracle/database/19C/soft/runInstaller -silent -responseFile /tmp/$CONFIG2"  >> $LOG
+sudo /oracle/database/19C/soft/root.sh >> $LOG
+
+##actualiacion version de opatch
+sudo mv /oracle/GRIDINF/19C/soft/OPatch/ /oracle/GRIDINF/19C/soft/OPatch.old
+sudo unzip /tmp/$FICH3 -d /oracle/GRIDINF/19C/soft/
+
+#descomprimimos el parche
+sudo unzip /tmp/$FICH4
+sudo echo "-------------------parche descomprimido en tmp-------------------" >> $LOG
+sudo chown -R oracle:oinstall /tmp/31750108/
+sudo /oracle/GRIDINF/19C/soft/OPatch/opatchauto apply /tmp/31750108 >> $LOG
+sudo /oracle/GRIDINF/19C/soft/OPatch/opatchauto apply /tmp/31750108 -oh /oracle/database/19C/soft >> $LOG
+#### 32649737;SELECT * FROM DBA_DIRECTORIES IN PDB RETURNS ORA-12801,ORA-48189
+#### 31335037;RDBMS - DSTV35 UPDATE - TZDATA2020A
+sudo echo "----------------Fin de la instalacion----------------">> $LOG

@@ -44,7 +44,8 @@ variable "disco3_size" {
   default = "10"
 }
 variable "vm_size" {
-  default = "Standard_B2ms"
+  # Standard_A4_v2 Standard_B2ms para test y pruebas. Usar máquinas con al menos 8GB de memoria y >15GB de disco temporal
+  default = "Standard_A4_v2"
 }
 
 variable "os_publisher" {
