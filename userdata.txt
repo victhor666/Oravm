@@ -137,7 +137,7 @@ sudo su - oracle -c "/oracle/GRIDINF/19C/soft/gridSetup.sh -silent -responseFile
 sudo echo "----------------Ejecucion de scripts de root----------------">> $LOG
 sudo /oraInventory/orainstRoot.sh
 sudo /oracle/GRIDINF/19C/soft/root.sh >> $LOG 
-sudo echo "----------------validando requisitos de instalacion----------------">> $LOG
+sudo echo "----------------Ejecutando configtools en el grinch----------------">> $LOG
 sudo su - oracle -c "/oracle/GRIDINF/19C/soft/gridSetup.sh -executeConfigTools -responseFile /tmp/$CONFIG1 -silent"
 sudo echo "----------------validacion de arranque----------------">> $LOG
 sudo /oracle/GRIDINF/19C/soft/bin/crsctl stat res -t >> $LOG
@@ -147,6 +147,7 @@ sudo su - oracle -c "/oracle/database/19C/soft/runInstaller -silent -responseFil
 sudo /oracle/database/19C/soft/root.sh >> $LOG
 
 ##actualiacion version de opatch
+sudo echo "----------------actualizacion de opach ----------------">> $LOG
 sudo mv /oracle/GRIDINF/19C/soft/OPatch/ /oracle/GRIDINF/19C/soft/OPatch.old
 sudo unzip /tmp/$FICH3 -d /oracle/GRIDINF/19C/soft/
 
