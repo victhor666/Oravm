@@ -1,5 +1,6 @@
 #!/bin/sh
 
+#script de arranque en maquinas de azure con instalacion completa de oracle
 #variables
 ##################################################################################################
 
