@@ -50,6 +50,9 @@ variable "vm_size" {
 variable "servername"{
   default = "OraVM"
 }
+variable "DATABASENAME" {
+  default = "ORCLBBDD"
+}
 
 variable "os_publisher" {
   default = {
