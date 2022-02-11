@@ -31,7 +31,7 @@ resource "azurerm_linux_virtual_machine" "OraVm" {
   resource_group_name             = azurerm_resource_group.Rg.name
   network_interface_ids           = [azurerm_network_interface.OraNic.id]
   size                            = var.vm_size
-  computer_name                   = "OracleVM"
+  computer_name                   = var.servername
   admin_username                  = "azureuser"
   disable_password_authentication = true
   provision_vm_agent              = true

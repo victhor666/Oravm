@@ -9,6 +9,8 @@ FICH1="LINUX.X64_193000_db_home.zip"
 FICH2="LINUX.X64_193000_grid_home.zip"
 FICH3="Opatch_12.2.0.1.21_Linux-x86-64.zip"
 FICH4="p31750108_190000_Linux-x86-64.zip"
+FICH5="p31335037_190000_Linux-x86-64.zip"
+FICH6="p32649737_199000DBRU_Linux-x86-64.zip"
 CONFIG1="auto_install_oracle_grid_19c.rsp"
 CONFIG2="auto_install_oracle_database_19c.rsp"
 LOG="/tmp/script.log"
@@ -86,6 +88,8 @@ sudo wget $RUTA$FICH1 -O /tmp/$FICH1
 sudo wget $RUTA$FICH2 -O /tmp/$FICH2 
 sudo wget $RUTA$FICH3 -O /tmp/$FICH3 
 sudo wget $RUTA$FICH4 -O /tmp/$FICH4 
+sudo wget $RUTA$FICH5 -O /tmp/$FICH5
+sudo wget $RUTA$FICH6 -O /tmp/$FICH6 
 sudo wget $RUTA$CONFIG1 -O /tmp/$CONFIG1
 sudo wget $RUTA$CONFIG2 -O /tmp/$CONFIG2
 echo "----------------FIN Descarga de ficheros del repositorio----------------">> $LOG
@@ -93,6 +97,7 @@ echo "----------------FIN Descarga de ficheros del repositorio----------------">
 # Descomprimimos el grid y los fuentes de oracle
 sudo unzip /tmp/$FICH1 -d /oracle/database/19C/soft
 sudo unzip /tmp/$FICH2 -d /oracle/GRIDINF/19C/soft
+
 sudo chown -R oracle:oinstall /oracle
 # NOTA---tema importante, poner una maquina con al menos 8GB de memoria
 
@@ -149,15 +154,31 @@ sudo /oracle/database/19C/soft/root.sh >> $LOG
 ##actualiacion version de opatch
 sudo echo "----------------actualizacion de opach ----------------">> $LOG
 sudo mv /oracle/GRIDINF/19C/soft/OPatch/ /oracle/GRIDINF/19C/soft/OPatch.old
+sudo mv  /oracle/database/19C/soft/OPatch/  /oracle/database/19C/soft/OPatch.old
 sudo chown -R oracle:oinstall /oracle/GRIDINF/19C/soft/OPatch/
 sudo unzip /tmp/$FICH3 -d /oracle/GRIDINF/19C/soft/
+sudo unzip /tmp/$FICH3 -d /oracle/database/19C/soft/
+sudo chown -R oracle:oinstall /oracle/GRIDINF/19C/soft/OPatch/
+sudo chown -R oracle:oinstall /oracle/database/19C/soft/OPatch/
 
 #descomprimimos el parche
 sudo unzip /tmp/$FICH4 -d /tmp/
 sudo echo "-------------------parche descomprimido en tmp-------------------" >> $LOG
 sudo chown -R oracle:oinstall /tmp/31750108/
 sudo /oracle/GRIDINF/19C/soft/OPatch/opatchauto apply /tmp/31750108 >> $LOG
-sudo /oracle/GRIDINF/19C/soft/OPatch/opatchauto apply /tmp/31750108 -oh /oracle/database/19C/soft >> $LOG
+sudo echo "-------------------finalizado parcheo grid-------------------" >> $LOG
+sudo /oracle/database/19C/soft/OPatch/opatchauto apply /tmp/31750108 -oh /oracle/database/19C/soft >> $LOG
 #### 32649737;SELECT * FROM DBA_DIRECTORIES IN PDB RETURNS ORA-12801,ORA-48189
 #### 31335037;RDBMS - DSTV35 UPDATE - TZDATA2020A
+sudo echo "-------------------aplicacion de parches menores-------------------" >> $LOG
+sudo unzip /tmp/$FICH5 -d /tmp/
+sudo unzip /tmp/$FICH6 -d /tmp/
+sudo chown -R oracle:oinstall /tmp/32649737
+sudo chown -R oracle:oinstall /tmp/31335037
+sudo su - oracle -c "/oracle/database/19C/soft/OPatch/opatch apply /tmp/32649737 -silent" >> $LOG
+sudo su - oracle -c /oracle/database/19C/soft/OPatch/opatch apply /tmp/31335037 -silent" >> $LOG
+sudo echo "-------------------ULTIMAS COMPROBACIONES-------------------" >> $LOG
+sudo su - oracle -c "/oracle/GRIDINF/19C/soft/OPatch/opatch lspatches" >> $LOG
+sudo su - oracle -c "/oracle/database/19C/soft/OPatch/opatch lspatches" >> $LOG
+
 sudo echo "----------------Fin de la instalacion----------------">> $LOG

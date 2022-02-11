@@ -47,6 +47,9 @@ variable "vm_size" {
   #  Standard_B2ms para test y pruebas. Usar máquinas con al menos 8GB de memoria y >15GB de disco temporal
   default = "Standard_B2ms"
 }
+variable "servername"{
+  default = "OraVM"
+}
 
 variable "os_publisher" {
   default = {
