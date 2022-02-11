@@ -59,32 +59,6 @@ resource "azurerm_linux_virtual_machine" "OraVm" {
     storage_account_type = "Standard_LRS"
     disk_size_gb         = var.osdisk_size
   }
-########################
-##Provisioners Aqui podremos poner que copie ficheros de local al servidor o que se ejecuten tareas en remoto con remote-exec
-########################
-#  provisioner "file" {
-#     source = "./main.tf"
-#     destination = "/tmp/hola.txt"
-#     connection {
-#       type = "ssh"
-#       user = "azureuser"
-#       host = azurerm_linux_virtual_machine.OraVm.public_ip_address
-#       private_key = file("~/orauser")
-#       timeout  = "2m"
-#     }
-#   }
-#  provisioner "file" {
-#     source = "./main.tf"
-#     destination = "/tmp/hola.txt"
-#     connection {
-#       type = "ssh"
-#       user = "azureuser"
-#       host = azurerm_linux_virtual_machine.OraVm.public_ip_address
-#       private_key = file("~/orauser")
-#       timeout  = "2m"
-#     }
-#   }
-
 
   tags = {
     environment = "Orademo"

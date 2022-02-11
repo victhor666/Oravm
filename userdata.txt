@@ -152,7 +152,7 @@ sudo mv /oracle/GRIDINF/19C/soft/OPatch/ /oracle/GRIDINF/19C/soft/OPatch.old
 sudo unzip /tmp/$FICH3 -d /oracle/GRIDINF/19C/soft/
 
 #descomprimimos el parche
-sudo unzip /tmp/$FICH4
+sudo unzip /tmp/$FICH4 -d /tmp/
 sudo echo "-------------------parche descomprimido en tmp-------------------" >> $LOG
 sudo chown -R oracle:oinstall /tmp/31750108/
 sudo /oracle/GRIDINF/19C/soft/OPatch/opatchauto apply /tmp/31750108 >> $LOG
