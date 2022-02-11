@@ -149,6 +149,7 @@ sudo /oracle/database/19C/soft/root.sh >> $LOG
 ##actualiacion version de opatch
 sudo echo "----------------actualizacion de opach ----------------">> $LOG
 sudo mv /oracle/GRIDINF/19C/soft/OPatch/ /oracle/GRIDINF/19C/soft/OPatch.old
+sudo chown -R oracle:oinstall /oracle/GRIDINF/19C/soft/OPatch/
 sudo unzip /tmp/$FICH3 -d /oracle/GRIDINF/19C/soft/
 
 #descomprimimos el parche
