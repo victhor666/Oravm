@@ -63,8 +63,8 @@ resource "azurerm_linux_virtual_machine" "OraVm" {
   tags = {
     environment = "Orademo"
   }
-    provisioner "local-exec" {
-    command = "echo 'sed -i \"s/ORCLBBDD1/${var.DATABASENAME}/g\" user_data_azure.txt' > aaa.sh;chmod +x aaa.sh ;./aaa.sh"
+      provisioner "local-exec" {
+    command = "sed -i \"s/ORCLBBDD1/${var.DATABASENAME}/g\" $(pwd)/userdata.txt"
     interpreter = ["/bin/bash", "-c"]
   }
 }
