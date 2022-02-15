@@ -180,7 +180,7 @@ sudo unzip /tmp/$FICH6 -d /tmp/
 sudo chown -R oracle:oinstall /tmp/32649737
 sudo chown -R oracle:oinstall /tmp/31335037
 sudo su - oracle -c "/oracle/database/19C/soft/OPatch/opatch apply /tmp/32649737 -silent"
-sudo su - oracle -c /oracle/database/19C/soft/OPatch/opatch apply /tmp/31335037 -silent"
+sudo su - oracle -c "/oracle/database/19C/soft/OPatch/opatch apply /tmp/31335037 -silent"
 sudo sleep 20
 sudo echo "-------------------ULTIMAS COMPROBACIONES-------------------" >> $LOG
 sudo su - oracle -c "/oracle/GRIDINF/19C/soft/OPatch/opatch lspatches" >> $LOG
