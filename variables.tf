@@ -30,10 +30,6 @@ variable "sg_name" {
 
 # VARIABLES SIMPLIFICADAS PARA LA INSTANCIA
 
-variable "Nombre_Instancia" {
-  default = "OraVM"
-}
-
 variable "osdisk_size" {
   default = "30"
 }
@@ -45,7 +41,7 @@ variable "disco3_size" {
 }
 variable "vm_size" {
   #  Standard_B2ms para test y pruebas. Usar máquinas con al menos 8GB de memoria y >15GB de disco temporal
-  default = "Standard_B2ms"
+  default = "Standard_B4ms"
 }
 variable "servername"{
   default = "OraVM"
