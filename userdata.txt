@@ -13,6 +13,7 @@ FICH5="p31335037_190000_Linux-x86-64.zip"
 FICH6="p32649737_199000DBRU_Linux-x86-64.zip"
 CONFIG1="auto_install_oracle_grid_19c.rsp"
 CONFIG2="auto_install_oracle_database_19c.rsp"
+CONFIG3="auto_dbca_createdb_19c.rsp"
 LOG="/tmp/script.log"
 BBDD="ORCLBBDD1"
 ##################################################################################################
@@ -94,6 +95,7 @@ sudo wget $RUTA$FICH5 -O /tmp/$FICH5
 sudo wget $RUTA$FICH6 -O /tmp/$FICH6 
 sudo wget $RUTA$CONFIG1 -O /tmp/$CONFIG1
 sudo wget $RUTA$CONFIG2 -O /tmp/$CONFIG2
+sudo wget $RUTA$CONFIG3 -O /tmp/$CONFIG3
 echo "----------------FIN Descarga de ficheros del repositorio----------------">> $LOG
 
 # Descomprimimos el grid y los fuentes de oracle
@@ -177,8 +179,9 @@ sudo unzip /tmp/$FICH5 -d /tmp/
 sudo unzip /tmp/$FICH6 -d /tmp/
 sudo chown -R oracle:oinstall /tmp/32649737
 sudo chown -R oracle:oinstall /tmp/31335037
-sudo su - oracle -c "/oracle/database/19C/soft/OPatch/opatch apply /tmp/32649737 -silent" >> $LOG
-sudo su - oracle -c /oracle/database/19C/soft/OPatch/opatch apply /tmp/31335037 -silent" >> $LOG
+sudo su - oracle -c "/oracle/database/19C/soft/OPatch/opatch apply /tmp/32649737 -silent"
+sudo su - oracle -c /oracle/database/19C/soft/OPatch/opatch apply /tmp/31335037 -silent"
+sudo sleep 20
 sudo echo "-------------------ULTIMAS COMPROBACIONES-------------------" >> $LOG
 sudo su - oracle -c "/oracle/GRIDINF/19C/soft/OPatch/opatch lspatches" >> $LOG
 sudo su - oracle -c "/oracle/database/19C/soft/OPatch/opatch lspatches" >> $LOG
