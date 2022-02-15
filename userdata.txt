@@ -181,9 +181,15 @@ sudo chown -R oracle:oinstall /tmp/32649737
 sudo chown -R oracle:oinstall /tmp/31335037
 sudo su - oracle -c "/oracle/database/19C/soft/OPatch/opatch apply /tmp/32649737 -silent"
 sudo su - oracle -c "/oracle/database/19C/soft/OPatch/opatch apply /tmp/31335037 -silent"
-sudo sleep 20
 sudo echo "-------------------ULTIMAS COMPROBACIONES-------------------" >> $LOG
 sudo su - oracle -c "/oracle/GRIDINF/19C/soft/OPatch/opatch lspatches" >> $LOG
 sudo su - oracle -c "/oracle/database/19C/soft/OPatch/opatch lspatches" >> $LOG
 
+sudo echo "-------------------CREACION DE BBDD-------------------" >> $LOG
+sudo sed -i "s/gdbName=ACNCDB/gdbName=$BBDD/g" /tmp/auto_dbca_createdb_19c.rsp
+sudo sed -i "s/sysPassword=/sysPassword=$PASS/g" /tmp/auto_dbca_createdb_19c.rsp
+sudo sed -i "s/systemPassword=/systemPassword=$PASS/g" /tmp/auto_dbca_createdb_19c.rsp
+sudo echo "-------------------NOMBRE DE BBDD Y PASS MODIFICADAS------------" >> $LOG
+sudo echo "-------------------CREACION DE LA BBDD $BBDD------------" >> $LOG
+/oracle/database/19C/soft/bin/dbca -silent -createDatabase -responseFile /tmp/auto_dbca_createdb_19c.rsp
 sudo echo "----------------Fin de la instalacion----------------">> $LOG
