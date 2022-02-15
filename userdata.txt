@@ -189,7 +189,11 @@ sudo echo "-------------------CREACION DE BBDD-------------------" >> $LOG
 sudo sed -i "s/gdbName=ACNCDB/gdbName=$BBDD/g" /tmp/auto_dbca_createdb_19c.rsp
 sudo sed -i "s/sysPassword=/sysPassword=$PASS/g" /tmp/auto_dbca_createdb_19c.rsp
 sudo sed -i "s/systemPassword=/systemPassword=$PASS/g" /tmp/auto_dbca_createdb_19c.rsp
+sudo su -c "echo $PASS > /oracle_base/DEFAULT_SYS_PASS.txt"
 sudo echo "-------------------NOMBRE DE BBDD Y PASS MODIFICADAS------------" >> $LOG
 sudo echo "-------------------CREACION DE LA BBDD $BBDD------------" >> $LOG
-/oracle/database/19C/soft/bin/dbca -silent -createDatabase -responseFile /tmp/auto_dbca_createdb_19c.rsp
+sudo su - oracle -c "/oracle/database/19C/soft/bin/dbca -silent -createDatabase -responseFile /tmp/auto_dbca_createdb_19c.rsp" >> $LOG
+sudo su - oracle -c "export ORACLE_HOME=/oracle/database/19C/soft;/oracle/database/19C/soft/bin/srvctl status database -d $BBDD" >> $LOG
+sudo echo "----------------Borramos temporales----------------">> $LOG
+sudo rm -rf /tmp/*.zip /tmp/*.rsp /tmp/3*
 sudo echo "----------------Fin de la instalacion----------------">> $LOG
