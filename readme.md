@@ -1,10 +1,8 @@
 # Creación de una máquina de oracle desde IaaS 
 
-
-***Primero lo primero, hay que tener una clave ssh con la que nos conectaremos***
-
-
-###clonamos el repositorio en la consola de azure 
+## Instrucciones de uso
+ 
+### Clonamos el repositorio en la consola de azure 
   > git clone https://github.com/victhor666/Oravm.git
 
 lo dejará todo en   /home/[tu-usuario]/Oravm
@@ -49,7 +47,7 @@ Aqui podremos ver la evolución en /tmp/script.log haciendo
   > tail -f /tmp/script.log
 
 ### Cuando termine podremos acceder a la bbdd con el nombre que hayamos definido en el fichero de configuración
-## La contraseña por defecto de la bbdd está en ***/oracle_base/DEFAULT_SYS_PASS.txt***
+##### La contraseña por defecto de la bbdd está en ***/oracle_base/DEFAULT_SYS_PASS.txt***
 (No está en ningún sitio mas que ese, y es con acceso de root, pero se recomienda cambiarla)
 
 Y esto es todo, que no es poco. 
