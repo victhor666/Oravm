@@ -67,8 +67,7 @@ echo "----------------Configuracion asm----------------">> $LOG
 sudo oracleasm configure       >> $LOG
 sudo oracleasm init >> $LOG
 echo "----------------Configuracion para que arranque desde el inicio----------------">> $LOG
-sudo echo -e "ORACLEASM_ENABLED=true\nORACLEASM_UID=oracle\nORACLEASM_GID=asmadmin\nORACLEASM_SCANBOOT=true\nORACLEASM_SCANORDER=""\nORACLEASM_SCANEXCLUDE=""ORACLEASM_SCAN_DIRECTORIES=""\nORACLEASM_USE_LOGICAL_BLOCK_SIZE=false" > aaa.txt
-
+sudo su -c  'echo -e "ORACLEASM_ENABLED=true\nORACLEASM_UID=oracle\nORACLEASM_GID=asmadmin\nORACLEASM_SCANBOOT=true\nORACLEASM_SCANORDER=""\nORACLEASM_SCANEXCLUDE=""ORACLEASM_SCAN_DIRECTORIES=""\nORACLEASM_USE_LOGICAL_BLOCK_SIZE=false" > /etc/sysconfig/oracleasm'
 
 #agregamos grupos
 sudo echo "Agregamos grupos" >> $LOG
