@@ -55,6 +55,7 @@ resource "azurerm_linux_virtual_machine" "OraVm" {
   # VOLUMEN
   ######################
   os_disk {
+    name                 = "${var.prefix}-vm-OS"
     caching              = "ReadWrite"
     storage_account_type = "Standard_LRS"
     disk_size_gb         = var.osdisk_size
@@ -72,7 +73,7 @@ resource "azurerm_linux_virtual_machine" "OraVm" {
 ## Agregamos un disco adicional
 ###############################
 resource "azurerm_managed_disk" "disco2" {
-  name                            = "${var.prefix}-vm-disco2"
+  name                            = "${var.prefix}-vm-OracleSoft"
   location                        = azurerm_resource_group.Rg.location
   resource_group_name             = azurerm_resource_group.Rg.name
   storage_account_type            = "Standard_LRS"
@@ -80,7 +81,7 @@ resource "azurerm_managed_disk" "disco2" {
   disk_size_gb                    = var.disco2_size
 }
 resource "azurerm_managed_disk" "disco3" {
-  name                            = "${var.prefix}-vm-disco3"
+  name                            = "${var.prefix}-vm-ASM-DATA01"
   location                        = azurerm_resource_group.Rg.location
   resource_group_name             = azurerm_resource_group.Rg.name
   storage_account_type            = "Standard_LRS"
