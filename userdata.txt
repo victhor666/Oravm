@@ -15,7 +15,6 @@ CONFIG1="auto_install_oracle_grid_19c.rsp"
 CONFIG2="auto_install_oracle_database_19c.rsp"
 CONFIG3="auto_dbca_createdb_19c.rsp"
 LOG="/tmp/script.log"
-BBDD="ORCLBBDD1"
 ##################################################################################################
 
 sudo echo "Arrancamos el script de instalacion" > $LOG
@@ -65,8 +64,11 @@ sudo yum install kmod-oracleasm -y >> $LOG
 
 #configuraciones asm
 echo "----------------Configuracion asm----------------">> $LOG
-sudo oracleasm configure >> $LOG
+sudo oracleasm configure       >> $LOG
 sudo oracleasm init >> $LOG
+echo "----------------Configuracion para que arranque desde el inicio----------------">> $LOG
+sudo echo -e "ORACLEASM_ENABLED=true\nORACLEASM_UID=oracle\nORACLEASM_GID=asmadmin\nORACLEASM_SCANBOOT=true\nORACLEASM_SCANORDER=""\nORACLEASM_SCANEXCLUDE=""ORACLEASM_SCAN_DIRECTORIES=""\nORACLEASM_USE_LOGICAL_BLOCK_SIZE=false" > aaa.txt
+
 
 #agregamos grupos
 sudo echo "Agregamos grupos" >> $LOG
@@ -184,7 +186,7 @@ sudo su - oracle -c "/oracle/database/19C/soft/OPatch/opatch apply /tmp/31335037
 sudo echo "-------------------ULTIMAS COMPROBACIONES-------------------" >> $LOG
 sudo su - oracle -c "/oracle/GRIDINF/19C/soft/OPatch/opatch lspatches" >> $LOG
 sudo su - oracle -c "/oracle/database/19C/soft/OPatch/opatch lspatches" >> $LOG
-
+BBDD="ORCLBBDD"
 sudo echo "-------------------CREACION DE BBDD-------------------" >> $LOG
 sudo sed -i "s/gdbName=ACNCDB/gdbName=$BBDD/g" /tmp/auto_dbca_createdb_19c.rsp
 sudo sed -i "s/sysPassword=/sysPassword=$PASS/g" /tmp/auto_dbca_createdb_19c.rsp

@@ -47,7 +47,7 @@ variable "servername"{
   default = "OraVM"
 }
 variable "DATABASENAME" {
-  default = "ORCLBBDD"
+  default = "ORCLBBDD1"
 }
 
 variable "os_publisher" {
