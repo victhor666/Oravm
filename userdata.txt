@@ -231,5 +231,5 @@ export SHLIB_PATH=$ORACLE_HOME/lib32
 export TNS_ADMIN=$ORACLE_HOME/network/admin
 export PATH=$ORACLE_HOME/bin:$ORACLE_HOME/OPatch:$ORACLE_HOME/jdk/bin:/usr/bin:/usr/bin/X11:/usr/local/bin:/usr/sbin:/etc:$PATH
 """ > ${FILE_ENTORNO_BBDD}
-chmod 775 ${FILE_ENTORNO_BBDD}
+sudo chmod 775 ${FILE_ENTORNO_BBDD}
 sudo chown oracle:oinstall ${FILE_ENTORNO_BBDD}
