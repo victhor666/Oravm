@@ -65,7 +65,7 @@ resource "azurerm_linux_virtual_machine" "OraVm" {
     environment = "Orademo"
   }
       provisioner "local-exec" {
-    command = "sed -i \"s/ORCLBBDD1/${var.DATABASENAME}/g\" $(pwd)/userdata.txt"
+    command = "sed -i \"s/ORCLBBDD/${var.DATABASENAME}/g\" $(pwd)/userdata.txt"
     interpreter = ["/bin/bash", "-c"]
   }
 }

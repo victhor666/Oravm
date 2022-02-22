@@ -185,7 +185,7 @@ sudo su - oracle -c "/oracle/database/19C/soft/OPatch/opatch apply /tmp/31335037
 sudo echo "-------------------ULTIMAS COMPROBACIONES-------------------" >> $LOG
 sudo su - oracle -c "/oracle/GRIDINF/19C/soft/OPatch/opatch lspatches" >> $LOG
 sudo su - oracle -c "/oracle/database/19C/soft/OPatch/opatch lspatches" >> $LOG
-BBDD="ORCLBBDD"
+BBDD="ORCLBBDD1"
 sudo echo "-------------------CREACION DE BBDD $BBDD-------------------" >> $LOG
 sudo sed -i "s/gdbName=ACNCDB/gdbName=$BBDD/g" /tmp/auto_dbca_createdb_19c.rsp
 sudo sed -i "s/sysPassword=/sysPassword=$PASS/g" /tmp/auto_dbca_createdb_19c.rsp
@@ -198,3 +198,38 @@ sudo su - oracle -c "export ORACLE_HOME=/oracle/database/19C/soft;/oracle/databa
 sudo echo "----------------Borramos temporales----------------">> $LOG
 sudo rm -rf /tmp/*.zip /tmp/*.rsp /tmp/3*
 sudo echo "----------------Fin de la instalacion----------------">> $LOG
+
+FILE_ENTORNO_ASM="/home/oracle/entorno_ASM"
+FILE_ENTORNO_BBDD="/home/oracle/entorno_${BBDD}"
+
+sudo echo """
+export BBDD=+ASM
+export ORACLE_SID=+ASM
+export ORACLE_BASE=/oracle_base
+export ORACLE_HOME=/oracle/GRIDINF/19C/soft
+export NLS_LANG=SPANISH_SPAIN.AL32UTF8
+export NLS_NUMERIC_CHARACTERS=,.
+export NLS_SORT=BINARY
+export LD_LIBRARY_PATH=$ORACLE_HOME/lib
+export SHLIB_PATH=$ORACLE_HOME/lib32
+export TNS_ADMIN=$ORACLE_HOME/network/admin
+export PS1='$BBDD<'`hostname`'>$PWD$ ';
+export PATH=$ORACLE_HOME/bin:$ORACLE_HOME/OPatch:$ORACLE_HOME/jdk/bin:/usr/bin:/usr/bin/X11:/usr/local/bin:/usr/sbin:/etc:$PATH
+""" > ${FILE_ENTORNO_ASM}
+sudo chmod 755 ${FILE_ENTORNO_ASM}
+sudo chown oracle:oinstall ${FILE_ENTORNO_ASM}
+sudo echo """
+export BBDD=${BBDD}
+export ORACLE_SID=${BBDD}
+export ORACLE_BASE=/oracle_base
+export ORACLE_HOME=/oracle/database/19C/soft
+export NLS_LANG=SPANISH_SPAIN.AL32UTF8
+export NLS_NUMERIC_CHARACTERS=,.
+export NLS_SORT=BINARY
+export LD_LIBRARY_PATH=$ORACLE_HOME/lib
+export SHLIB_PATH=$ORACLE_HOME/lib32
+export TNS_ADMIN=$ORACLE_HOME/network/admin
+export PATH=$ORACLE_HOME/bin:$ORACLE_HOME/OPatch:$ORACLE_HOME/jdk/bin:/usr/bin:/usr/bin/X11:/usr/local/bin:/usr/sbin:/etc:$PATH
+""" > ${FILE_ENTORNO_BBDD}
+chmod 775 ${FILE_ENTORNO_BBDD}
+sudo chown oracle:oinstall ${FILE_ENTORNO_BBDD}
