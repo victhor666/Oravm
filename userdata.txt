@@ -185,7 +185,7 @@ sudo su - oracle -c "/oracle/database/19C/soft/OPatch/opatch apply /tmp/31335037
 sudo echo "-------------------ULTIMAS COMPROBACIONES-------------------" >> $LOG
 sudo su - oracle -c "/oracle/GRIDINF/19C/soft/OPatch/opatch lspatches" >> $LOG
 sudo su - oracle -c "/oracle/database/19C/soft/OPatch/opatch lspatches" >> $LOG
-BBDD="ORCLBBDD1"
+BBDD="ORCLBBDD"
 sudo echo "-------------------CREACION DE BBDD $BBDD-------------------" >> $LOG
 sudo sed -i "s/gdbName=ACNCDB/gdbName=$BBDD/g" /tmp/auto_dbca_createdb_19c.rsp
 sudo sed -i "s/sysPassword=/sysPassword=$PASS/g" /tmp/auto_dbca_createdb_19c.rsp
